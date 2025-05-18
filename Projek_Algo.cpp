@@ -4,6 +4,8 @@
 
 using namespace std;
 
+string passwordAdmin = "shafiq123";
+
 struct Film {
     string judul_Film;
     string sinopsis;
@@ -50,7 +52,7 @@ makanan food[5] {
     {"Medium Popcorn", 35000},
     {"Large Popcorn", 40000},
     {"French Fries", 25000},
-    {"Sausage Party", 30000}
+    {"Sausage Box", 30000}
 };
 
 struct minuman {
@@ -86,7 +88,11 @@ struct jadwal_film {
     bool kursi[5][10]; // 5 baris, 10 kolom kursi
 };
 
-void tampilkanmenu(string name) {
+jadwal_film jadwal[5][3];
+
+vector<Tiket> tiket_dipesan;
+
+void tampilkanmenucustomer(string name) {
     cout << endl;
     cout << "||  Selamat datang, " << name << endl << endl;
     cout << ">>>>>>>>>>>>>>>>>>>>>  BABARSARI PLAZA - CINEMA XX  <<<<<<<<<<<<<<<<<<<<<<" << endl;
@@ -233,8 +239,7 @@ void tampilanmenu_makanan_minuman(string name){
     system("cls");
 }
 
-int main()
-{
+void menucustomer(){
     string nama;
     int choice;
     cout << "Masukkan nama : ";
@@ -242,7 +247,7 @@ int main()
     system("cls");
 
     while(choice != 5){
-    tampilkanmenu(nama);
+    tampilkanmenucustomer(nama);
     cout << "Pilih Menu : "; cin >> choice;
 
     switch (choice){
@@ -264,5 +269,67 @@ int main()
         default: cout << "Pilihan tidak valid!" << endl;
     }
     }
+}
+
+void menuawal(){
+    system("cls");
+    cout << endl;
+    cout << ">>>>>>>>>>>>>>>>>>>>>  BABARSARI PLAZA - CINEMA XX  <<<<<<<<<<<<<<<<<<<<<<" << endl;
+    cout << " |                         ~~ Menu Awal ~~                             | " << endl;
+    cout << " |     1. Admin                                                        | " << endl;
+    cout << " |     2. Customer                                                     | " << endl;
+    cout << " |     3. Exit                                                         | " << endl;
+    cout << " |                                                                     | " << endl;
+    cout << ">>>>>>>>>>>>>>>>>>>>>>>  Contact : 0812-3456-7890  <<<<<<<<<<<<<<<<<<<<<<<" << endl << endl;
+}
+
+void menuadmin(){
+    int percobaan = 0;
+    string password;
+
+    while(percobaan <= 3 ){
+    cout << "Masukkan password admin: ";
+    getline(cin, password);
+    
+    if(password != passwordAdmin){
+        cout << "Password salah! ." << endl;
+        cout << "\nTekan Enter untuk coba lagi.";
+        cin.get();
+        system("cls");
+        percobaan++;
+    } else {
+        //menu mantap admin
+    }
+    }
+    if(percobaan >= 3){
+        cout << "Anda telah mencoba 3 kali. Kembali ke menu utama." << endl;
+        cout << "\nGoodbye";
+        cin.get();
+        system("cls");
+        exit(0);
+    }
+    
+}
+
+int main()
+{
+    int pil;
+    menuawal();
+    cout << "Pilih Menu : ";
+    cin >> pil;
+    cin.ignore();
+
+    switch(pil){
+        case 1 :
+            system("cls");
+            cout << "Selamat Datang di Menu Admin" << endl;
+            menuadmin(); 
+            break;
+        case 2 :
+            system("cls");
+            cout << "Selamat Datang di Menu Customer" << endl;
+            menucustomer();
+            break;
+        }
     return 0;
 }
