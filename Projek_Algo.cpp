@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -65,29 +67,92 @@ void tampilkanmenucustomer(string name) {
     cout << ">>>>>>>>>>>>>>>>>>>>>>>  Contact : 0812-3456-7890  <<<<<<<<<<<<<<<<<<<<<<<" << endl << endl;
 }
 
+void bacaDataFilmDariFile() {
+    ifstream file("film.txt");
+    if (!file.is_open()) {
+        cout << "File data film tidak ditemukan. Membuat file baru.\n";
+        return;
+    }
 
-void tampilanmenu_film(string name){
+    Movie.clear();
+    string line;
+    
+    while (getline(file, line)) {
+        Film film;
+        // Format file harus konsisten
+        film.judul_Film = line.substr(line.find(":") + 2);
+        
+        getline(file, line);
+        film.sinopsis = line.substr(line.find(":") + 2);
+        
+        getline(file, line);
+        film.direktur = line.substr(line.find(":") + 2);
+        
+        getline(file, line);
+        film.genre = line.substr(line.find(":") + 2);
+        
+        getline(file, line);
+        film.durasi = stoi(line.substr(line.find(":") + 2));
+
+        // Buat vector jadwal untuk film ini
+        Jadwal.push_back(vector<jadwal_film>());
+        
+        // Skip pembatas
+        getline(file, line);
+        
+        Movie.push_back(film);
+    }
+    file.close();
+}
+
+void tampilanmenu_film(string name) {
     system("cls");
+    bacaDataFilmDariFile();
+    const int LEBAR_LAYAR = 100;
+    const int LEBAR_KONTEN = LEBAR_LAYAR - 4; // 2 untuk border kiri dan kanan
+    
+    // Header
     cout << "||  Selamat datang, " << name << endl;
     cout << ">>>>>>>>>>>>>>>>>>>>>  BABARSARI PLAZA - CINEMA XX  <<<<<<<<<<<<<<<<<<<<<<" << endl;
-    cout << ">=======================      DAFTAR FILM      ==========================<\n";
-    if(Movie.empty()){
-        cout << "Tidak ada film yang tersedia.\n";
-    }   
-    for(int i = 0; i < Movie.size(); i++){
-        cout << endl;
-        cout << i+1 << ". " << Movie[i].judul_Film << endl << endl;
-        cout << "   Genre     : " << Movie[i].genre << endl;
-        cout << "   Durasi    : " << Movie[i].durasi << " Menit" << endl;
-        cout << "   Sutradara : " << Movie[i].direktur << endl;
-        cout << "   Sinopsis  : " << Movie[i].sinopsis << endl << endl;
-        cout << ">========================================================================<\n";
+    
+    // Garis pembatas atas
+    cout << setfill('=') << setw(LEBAR_LAYAR) << "" << setfill(' ') << endl;
+    
+    // Judul menu
+    cout << "| " << left << setw(LEBAR_KONTEN) << "DAFTAR FILM" << " |" << endl;
+    
+    if (Movie.empty()) {
+        cout << "| " << setw(LEBAR_KONTEN) << "Tidak ada film yang tersedia." << " |" << endl;
     }
+    
+    for (int i = 0; i < Movie.size(); i++) {
+        // Garis pemisah antar film
+        cout << "|" << setfill('-') << setw(LEBAR_LAYAR - 2) << "" << setfill(' ') << "|" << endl;
+        
+        // Judul film
+        cout << "| " << left << setw(LEBAR_KONTEN) << (to_string(i+1) + ". " + Movie[i].judul_Film) << " |" << endl;
+        
+        // Informasi dasar film
+        cout << "| " << left << setw(LEBAR_KONTEN) 
+             << "   Genre: " + Movie[i].genre << " |" << endl;
+        cout << "| " << left << setw(LEBAR_KONTEN) 
+             << "   Durasi: " + to_string(Movie[i].durasi) + " Menit" << " |" << endl;
+        cout << "| " << left << setw(LEBAR_KONTEN) 
+             << "   Sutradara: " + Movie[i].direktur << " |" << endl;
+        cout << "| " << left << setw(LEBAR_KONTEN)
+             << "   Sinopsis: " + Movie[i].sinopsis << " |" << endl;
+        }
+    
+    
+    // Garis pembatas bawah
+    cout << setfill('=') << setw(LEBAR_LAYAR) << "" << setfill(' ') << endl;
+    
     cout << "Tekan Enter untuk kembali ke menu utama."; 
     cin.ignore();
     cin.get();
     system("cls");
 }
+
 
 void pesantiket(string name){
     int film;
@@ -115,6 +180,7 @@ void pesantiket(string name){
     cout << Movie[film_pilih].judul_Film << endl;
 
 }
+
 
 void carifilm(string name){
     string cari;
@@ -175,7 +241,25 @@ void hapusfilm(){
     system("cls");
 }
 
+void simpanFilm() {
+    ofstream file("film.txt");
+    if (!file.is_open()) {
+        cout << "Gagal membuka file untuk penyimpanan.\n";
+        return;
+    }
+
+    for (const auto& film : Movie) {
+        file << "Judul Film: " << film.judul_Film << endl;
+        file << "Sinopsis: " << film.sinopsis << endl;
+        file << "Sutradara: " << film.direktur << endl;
+        file << "Genre: " << film.genre << endl;
+        file << "Durasi: " << film.durasi << endl;
+        file << "==========================================\n";
+    }
+    file.close();
+}
 void tambahfilm(){
+    system("cls");
     Film film_baru;
     cout << ">=======================      TAMBAH FILM      =======================<\n";
     cout << "Masukkan Judul Film : ";
@@ -191,6 +275,7 @@ void tambahfilm(){
     cin.ignore();
     
     Movie.push_back(film_baru);
+    simpanFilm(); 
     Jadwal.push_back(vector<jadwal_film>()); // Tambahkan vector kosong untuk jadwal film ini
 
     cout << "\nFilm berhasil ditambahkan!" << endl;
@@ -253,9 +338,41 @@ void tambahJadwal(){
             Jadwal[film_index].push_back(jadwal_baru);
             valid = false;
             cout << "\nJadwal berhasil ditambahkan!" << endl;
-
+            cin.get();
+            system("cls");
         }
     }
+}
+
+void lihatJadwal(){
+    system("cls");
+    cout << ">=======================      DAFTAR JADWAL FILM      =======================<\n";
+    if(Movie.empty()){
+        cout << "Tidak ada film yang tersedia.\n";
+        cout << "\nTekan Enter untuk kembali ke menu admin.";
+        cin.ignore();
+        cin.get();
+        system("cls");
+        return;
+    }
+    for(int i = 0; i < Movie.size(); i++){
+        cout << "\nFilm: " << Movie[i].judul_Film << endl;
+        if(Jadwal[i].empty()){
+            cout << "  Tidak ada jadwal tersedia.\n";
+        } else {
+            for(int j = 0; j < Jadwal[i].size(); j++){
+                cout << "  " << j + 1 << ". Tanggal: " << Jadwal[i][j].tanggal_tayang 
+                     << ", " << Jadwal[i][j].jam_tayang 
+                     << ", " << Jadwal[i][j].studio 
+                     << ", Harga: Rp " << Jadwal[i][j].harga_tiket << endl;
+            }
+        }
+    }
+
+    cout << "\nTekan Enter untuk kembali ke menu admin.";
+    cin.ignore();
+    cin.get();
+    system("cls");
 }
 
 void tampilanmenu_makanan_minuman(string name){
@@ -338,7 +455,7 @@ void tampilkanmenuAdmin(){
     cout << " |     5. Lihat Jadwal Film                                            | " << endl;
     cout << " |     6. Tambah Makanan/Minuman                                       | " << endl;
     cout << " |     7. Lihat Riwayat Transaksi                                      | " << endl;
-    cout << " |     8. Exit                                                         | " << endl;
+    cout << " |     8. Kembali ke Menu Utama                                        | " << endl;
     cout << " |                                                                     | " << endl;
     cout << ">>>>>>>>>>>>>>>>>>>>>>>  Contact : 0812-3456-7890  <<<<<<<<<<<<<<<<<<<<<<<" << endl << endl;
 }
@@ -363,10 +480,10 @@ void menuAdmin(){
             tampilanmenu_film("Admin");
             break;
         case 4 :
-            //lihatdaftarmakanan();
+            tambahJadwal();
             break;
         case 5 :
-            //lihatdaftartiket();
+            lihatJadwal();
             break;
         case 6 :
             //lihatdaftarjadwal();
@@ -375,7 +492,7 @@ void menuAdmin(){
             //lihatdaftarpembeli();
             break;
         case 8 :
-            cout << "Terima kasih telah menggunakan aplikasi ini!" << endl;
+            cout << "Kembali ke menu utama" << endl;
             break;
         default : 
             cout << "Pilihan tidak valid!" << endl;
@@ -426,6 +543,7 @@ void menuawalAdmin(){
 
 int main()
 {
+    bacaDataFilmDariFile(); 
     int pil;
     tampilkanmenuAwal();
     cout << "Pilih Menu : ";

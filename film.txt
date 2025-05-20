@@ -1,0 +1,12 @@
+Judul Film: Cars 3
+Sinopsis: McQueen yang sudah tua dan akan pensiun, namun dia menemukan penerusnya bernam cruz
+Sutradara: Disney
+Genre: Animation
+Durasi: 80
+==========================================
+Judul Film: Upin Ipin
+Sinopsis: Tentang Kembar yang suka menjelajahi dunia
+Sutradara: Les Copaque
+Genre: Animation
+Durasi: 90
+==========================================
