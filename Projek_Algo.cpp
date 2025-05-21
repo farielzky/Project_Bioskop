@@ -38,7 +38,6 @@ struct Tiket {
 struct jadwal_film {
     int film_index;
     string tanggal_tayang;
-    string studio;
     string jam_tayang;
     int harga_tiket;
     bool kursi[5][10]; 
@@ -50,8 +49,39 @@ vector<minuman> drink;
 vector<vector<jadwal_film>> Jadwal;
 string passwordAdmin = "shafiq123";
 vector<Tiket> tiket_dipesan;
+string Data_Film = "film.txt";
+string Data_Transaksi = "transaksi.txt";
 
-void tampilkanmenucustomer(string name) {
+void tampilkanmenuAwal(){
+    system("cls");
+    cout << endl;
+    cout << ">>>>>>>>>>>>>>>>>>>>>  BABARSARI PLAZA - CINEMA XX  <<<<<<<<<<<<<<<<<<<<<<" << endl;
+    cout << " |                         ~~ Menu Awal ~~                             | " << endl;
+    cout << " |     1. Admin                                                        | " << endl;
+    cout << " |     2. Customer                                                     | " << endl;
+    cout << " |     3. Exit                                                         | " << endl;
+    cout << " |                                                                     | " << endl;
+    cout << ">>>>>>>>>>>>>>>>>>>>>>>  Contact : 0812-3456-7890  <<<<<<<<<<<<<<<<<<<<<<<" << endl << endl;
+}
+
+void tampilkanmenuAdmin(){
+    cout << "Selamat Datang di Menu Admin" << endl;
+    cout << ">>>>>>>>>>>>>>>>>>>>>>  BABARSARI PLAZA - CINEMA XX  <<<<<<<<<<<<<<<<<<<<<" << endl;
+    cout << " |                  #        Menu Admin        #                       | " << endl;
+    cout << " |     1. Tambah Film                                                  | " << endl;
+    cout << " |     2. Hapus Film                                                   | " << endl;
+    cout << " |     3. Lihat Daftar Film                                            | " << endl;
+    cout << " |     4. Tambah Jadwal Film                                           | " << endl;
+    cout << " |     5. Lihat Jadwal Film                                            | " << endl;
+    cout << " |     6. Tambah Makanan/Minuman                                       | " << endl;
+    cout << " |     7. Lihat Daftar Makanan/Minuman                                 | " << endl;
+    cout << " |     8. Lihat Riwayat Transaksi                                      | " << endl;
+    cout << " |     9. Kembali ke Menu Utama                                        | " << endl;
+    cout << " |                                                                     | " << endl;
+    cout << ">>>>>>>>>>>>>>>>>>>>>>>  Contact : 0812-3456-7890  <<<<<<<<<<<<<<<<<<<<<<<" << endl << endl;
+}
+
+void tampilkanmenuCustomer(string name) {
     cout << endl;
     cout << "||  Selamat datang, " << name << endl << endl;
     cout << ">>>>>>>>>>>>>>>>>>>>>  BABARSARI PLAZA - CINEMA XX  <<<<<<<<<<<<<<<<<<<<<<" << endl;
@@ -68,7 +98,7 @@ void tampilkanmenucustomer(string name) {
 }
 
 void bacaDataFilmDariFile() {
-    ifstream file("film.txt");
+    ifstream file(Data_Film);
     if (!file.is_open()) {
         cout << "File data film tidak ditemukan. Membuat file baru.\n";
         return;
@@ -148,6 +178,26 @@ void tampilanmenu_film(string name) {
     cout << setfill('=') << setw(LEBAR_LAYAR) << "" << setfill(' ') << endl;
     
     cout << "Tekan Enter untuk kembali ke menu utama."; 
+    cin.get();
+    system("cls");
+}
+
+void tampilkanDenahkursi(){
+    system("cls");
+    cout << ">=======================      DENAH KURSI      =======================<\n";
+    cout << "  A B C D E F G H I J\n";
+    for(int i = 0; i < 5; i++){
+        cout << i + 1 << " ";
+        for(int j = 0; j < 10; j++){
+            if(Jadwal[i][j].kursi[i][j]){
+                cout << "X ";
+            } else {
+                cout << "O ";
+            }
+        }
+        cout << endl;
+    }
+    cout << "\nTekan Enter untuk kembali ke menu admin.";
     cin.ignore();
     cin.get();
     system("cls");
@@ -173,11 +223,103 @@ void pesantiket(string name){
     }
     cout << ">========================================================================<\n";
     cout << "Pilih Film (1-" << Movie.size() << ") "; cin >> film;
-    
-
 
     int film_pilih = film - 1; // Agar sesuai dengan indeks array Movie
     cout << Movie[film_pilih].judul_Film << endl;
+
+    if(Jadwal[film_pilih].empty()){
+        cout << "Tidak ada jadwal tersedia untuk film ini.\n";
+        cout << "\nTekan Enter untuk kembali ke menu utama.";
+        cin.ignore();
+        cin.get();
+        system("cls");
+        return;
+    }
+
+    system("cls");
+    cout << ">=======================      DAFTAR JADWAL FILM      ==========================<\n";
+    cout << "Film: " << Movie[film_pilih].judul_Film << endl << endl;
+
+    for(int i = 0; i < Jadwal[film_pilih].size(); i++){
+        cout << i + 1 << ". Tanggal: " << Jadwal[film_pilih][i].tanggal_tayang
+             << ", " << Jadwal[film_pilih][i].jam_tayang 
+             << ", Harga: Rp " << Jadwal[film_pilih][i].harga_tiket << endl;
+    }
+
+    cout << ">========================================================================<\n";
+    cout << "Pilih Jadwal (1-" << Jadwal[film_pilih].size() << ") "; cin >> film;
+    int jadwal_pilih = film - 1; // Agar sesuai dengan indeks array Jadwal
+
+    if(jadwal_pilih < 0 || jadwal_pilih >= Jadwal[film_pilih].size()){
+        cout << "Pilihan tidak valid!" << endl;
+        cout << "\nTekan Enter untuk kembali ke menu utama.";
+        cin.ignore();
+        cin.get();
+        system("cls");
+        return;
+    }
+
+    system("cls");
+
+    tampilkanDenahkursi();
+
+    char baris_char; 
+    int kolom;
+
+    cout << "\nPilih baris kursi (A-E): ";
+    cin >> baris_char;
+
+    int baris = toupper(baris_char) - 'A';
+    if (baris < 0 || baris >= 5) {
+        cout << "Baris tidak valid!" << endl;
+        cout << "\nTekan Enter untuk kembali ke menu utama.";
+        cin.ignore();
+        cin.get();
+        system("cls");
+        return;
+    }
+    
+    cout << "Pilih nomor kursi (1-10): ";
+    cin >> kolom;
+    
+    if (kolom < 1 || kolom > 10) {
+        cout << "Nomor kursi tidak valid!" << endl;
+        cout << "\nTekan Enter untuk kembali ke menu utama.";
+        cin.ignore();
+        cin.get();
+        system("cls");
+        return;
+    }
+    
+    kolom--; // Sesuaikan dengan indeks array
+    
+    // Periksa apakah kursi sudah dipesan
+    if (Jadwal[film_pilih][jadwal_pilih].kursi[baris][kolom]) {
+        cout << "Kursi sudah dipesan! Silakan pilih kursi lain." << endl;
+        cout << "\nTekan Enter untuk kembali ke menu utama.";
+        cin.ignore();
+        cin.get();
+        system("cls");
+        return;
+    }
+    
+    // Tanda kursi sudah dipesan
+    Jadwal[film_pilih][film_pilih].kursi[baris][kolom] = true;
+    
+    // Buat tiket baru
+    Tiket tiket_baru;
+    tiket_baru.nama_pembeli = name;
+    tiket_baru.jadwal_film_index = film_pilih;
+    tiket_baru.jadwal_index = jadwal_pilih;
+    tiket_baru.baris_kursi = baris;
+    tiket_baru.nomor_kursi = kolom + 1; // Tampilkan nomor kursi 1-based
+    tiket_baru.total_harga = Jadwal[film_pilih][jadwal_pilih].harga_tiket;
+    
+    // Tanya apakah ingin membeli makanan/minuman
+    char pilihan;
+    cout << "\nApakah ingin menambahkan makanan/minuman? (y/n): ";
+    cin >> pilihan;
+    
 
 }
 
@@ -323,8 +465,6 @@ void tambahJadwal(){
             getline(cin, jadwal_baru.tanggal_tayang);
             cout << "Masukkan Jam Tayang (HH:MM) : ";
             getline(cin, jadwal_baru.jam_tayang);
-            cout << "Masukkan Studio : ";
-            getline(cin, jadwal_baru.studio);
             cout << "Masukkan Harga Tiket : ";
             cin >> jadwal_baru.harga_tiket;
             cin.ignore();
@@ -362,8 +502,7 @@ void lihatJadwal(){
         } else {
             for(int j = 0; j < Jadwal[i].size(); j++){
                 cout << "  " << j + 1 << ". Tanggal: " << Jadwal[i][j].tanggal_tayang 
-                     << ", " << Jadwal[i][j].jam_tayang 
-                     << ", " << Jadwal[i][j].studio 
+                     << ", " << Jadwal[i][j].jam_tayang
                      << ", Harga: Rp " << Jadwal[i][j].harga_tiket << endl;
             }
         }
@@ -371,6 +510,47 @@ void lihatJadwal(){
 
     cout << "\nTekan Enter untuk kembali ke menu admin.";
     cin.ignore();
+    cin.get();
+    system("cls");
+}
+
+void tambahMakananMinuman(){
+    system("cls");
+    int pilihan;
+    cout << ">=======================      TAMBAH MAKANAN/MINUMAN      =======================<\n";
+    cout << "1. Makanan\n";
+    cout << "2. Minuman\n";
+    cout << "Pilih (1/2): ";
+    cin >> pilihan;
+    cin.ignore();
+
+    if(pilihan == 1){
+        makanan makanan_baru;
+        cout << "\nNama Makanan: ";
+        getline(cin, makanan_baru.namaMakanan);
+        
+        cout << "Harga: ";
+        cin >> makanan_baru.hargaMakanan;
+        cin.ignore();
+        
+        food.push_back(makanan_baru);
+        cout << "\nMakanan berhasil ditambahkan!" << endl;
+    } else if(pilihan == 2){
+        minuman minuman_baru;
+        cout << "\nNama Minuman: ";
+        getline(cin, minuman_baru.namaMinuman);
+        
+        cout << "Harga: ";
+        cin >> minuman_baru.hargaMinuman;
+        cin.ignore();
+        
+        drink.push_back(minuman_baru);
+        cout << "\nMinuman berhasil ditambahkan!" << endl;
+    } else {
+        cout << "\nPilihan tidak valid!" << endl;
+    }
+    
+    cout << "\nTekan Enter untuk kembali ke menu admin.";
     cin.get();
     system("cls");
 }
@@ -408,7 +588,7 @@ void menucustomer(){
     system("cls");
 
     while(choice != 5){
-    tampilkanmenucustomer(nama);
+    tampilkanmenuCustomer(nama);
     cout << "Pilih Menu : "; cin >> choice;
 
     switch (choice){
@@ -432,134 +612,118 @@ void menucustomer(){
     }
 }
 
-void tampilkanmenuAwal(){
-    system("cls");
-    cout << endl;
-    cout << ">>>>>>>>>>>>>>>>>>>>>  BABARSARI PLAZA - CINEMA XX  <<<<<<<<<<<<<<<<<<<<<<" << endl;
-    cout << " |                         ~~ Menu Awal ~~                             | " << endl;
-    cout << " |     1. Admin                                                        | " << endl;
-    cout << " |     2. Customer                                                     | " << endl;
-    cout << " |     3. Exit                                                         | " << endl;
-    cout << " |                                                                     | " << endl;
-    cout << ">>>>>>>>>>>>>>>>>>>>>>>  Contact : 0812-3456-7890  <<<<<<<<<<<<<<<<<<<<<<<" << endl << endl;
-}
-
-void tampilkanmenuAdmin(){
-    cout << "Selamat Datang di Menu Admin" << endl;
-    cout << ">>>>>>>>>>>>>>>>>>>>>>  BABARSARI PLAZA - CINEMA XX  <<<<<<<<<<<<<<<<<<<<<" << endl;
-    cout << " |                  #        Menu Admin        #                       | " << endl;
-    cout << " |     1. Tambah Film                                                  | " << endl;
-    cout << " |     2. Hapus Film                                                   | " << endl;
-    cout << " |     3. Lihat Daftar Film                                            | " << endl;
-    cout << " |     4. Tambah Jadwal Film                                           | " << endl;
-    cout << " |     5. Lihat Jadwal Film                                            | " << endl;
-    cout << " |     6. Tambah Makanan/Minuman                                       | " << endl;
-    cout << " |     7. Lihat Riwayat Transaksi                                      | " << endl;
-    cout << " |     8. Kembali ke Menu Utama                                        | " << endl;
-    cout << " |                                                                     | " << endl;
-    cout << ">>>>>>>>>>>>>>>>>>>>>>>  Contact : 0812-3456-7890  <<<<<<<<<<<<<<<<<<<<<<<" << endl << endl;
-}
-
 void menuAdmin(){
-    int pil;
-
-    while(pil != 8){
-    system("cls");
-    tampilkanmenuAdmin();
-    cout << "Pilih Menu : ";
-    cin >> pil;
-    cin.ignore();
-    switch(pil){
-        case 1 :
-            tambahfilm();
-            break;
-        case 2 :
-            hapusfilm();
-            break;
-        case 3 :
-            tampilanmenu_film("Admin");
-            break;
-        case 4 :
-            tambahJadwal();
-            break;
-        case 5 :
-            lihatJadwal();
-            break;
-        case 6 :
-            //lihatdaftarjadwal();
-            break;
-        case 7 :
-            //lihatdaftarpembeli();
-            break;
-        case 8 :
-            cout << "Kembali ke menu utama" << endl;
-            break;
-        default : 
-            cout << "Pilihan tidak valid!" << endl;
-            cout << "Tekan Enter untuk mencoba lagi.";
-            cin.ignore();
-            cin.get();
-            system("cls");
-            menuAdmin();
-            break;
-        }
-    }
-}
-
-void menuawalAdmin(){
     int percobaan = 0;
     string password;
 
-    while(percobaan <= 3 ){
-        cout << "Selamat Datang di Menu Admin" << endl;
+    while (percobaan < 3) {
+        cout << "================================" << endl;
+        cout << "| Selamat Datang di Menu Admin |" << endl;
+        cout << "================================" << endl;
         cout << "Masukkan password admin: ";
         cin >> password;
 
-    if(percobaan >= 3){
+        if (password != passwordAdmin) {
+            cout << "Password salah!.\nTekan Enter untuk coba lagi.";
+            cin.ignore();
+            cin.get();
+            system("cls");
+            percobaan++;
+        } else {
+            cout << "+=================+" << endl;
+            cout << "| Password benar! |" << endl;
+            cout << "+=================+" << endl;
+            system("cls");
+            break;
+        }
+    }
+
+    if (percobaan >= 3) {
         cout << "Anda telah mencoba 3 kali. Kembali ke menu utama." << endl;
         cout << "\nGoodbye";
         cin.get();
         system("cls");
         exit(0);
     }
-    
-    if(password != passwordAdmin){
-        cout << "Password salah!.";
-        cout << "\nTekan Enter untuk coba lagi.";
-        cin.ignore();
-        cin.get();
-        system("cls");
-        percobaan++;
-    } else {
-        cout << "Password benar!" << endl;
-        system("cls");
-        menuAdmin();
-        break;
-    }
-    }
-    
-}
 
+    int pil = 0;
+
+    while(pil != 9){
+        tampilkanmenuAdmin();
+        cout << "Pilih Menu : ";
+        cin >> pil;
+        cin.ignore();
+
+        switch(pil){
+            case 1 :
+                tambahfilm();
+                break;
+            case 2 :
+                hapusfilm();
+                break;
+            case 3 :
+                tampilanmenu_film("Admin");
+                break;
+            case 4 :
+               tambahJadwal();
+                break;
+            case 5 :
+                lihatJadwal();
+                break;
+            case 6 :
+                tambahMakananMinuman();
+                break;
+            case 7 :
+                //lihatdaftarpembeli();
+                break;
+            case 8 :
+                break;
+            case 9 :
+                cout << "Kembali ke Menu Utama" << endl;
+                break;
+            default : 
+                cout << "Pilihan tidak valid!" << endl;
+                cout << "Tekan Enter untuk mencoba lagi.";
+                cin.ignore();
+                cin.get();
+                system("cls");
+                menuAdmin();
+                break;
+        }
+    }
+}
 
 int main()
 {
     bacaDataFilmDariFile(); 
-    int pil;
-    tampilkanmenuAwal();
-    cout << "Pilih Menu : ";
-    cin >> pil;
-    cin.ignore();
+    int pil = 0;
+    while (true) {
+        system("cls");
+        tampilkanmenuAwal();
+        cout << "Pilih Menu : ";
+        cin >> pil;
 
-    switch(pil){
-        case 1 :
-            system("cls");
-            menuawalAdmin(); 
-            break;
-        case 2 :
-            system("cls");
-            cout << "Selamat Datang di Menu Customer" << endl;
-            menucustomer();
-            break;
-        }
-    return 0;
+        switch(pil){
+            case 1 :
+                system("cls");
+                menuAdmin(); 
+                break;
+            case 2 :
+                system("cls");
+                cout << "Selamat Datang di Menu Customer" << endl;
+                menucustomer();
+                break;
+            case 3 :
+                cout << "==========================================" << endl;
+                cout << "Terimakasih Telah Menggunakan Aplikasi Ini" << endl;
+                cout << "==========================================" << endl;
+                return 0;
+            default :
+                cout << "Pilihan tidak valid!" << endl;
+                cout << "Tekan Enter untuk mencoba lagi.";
+                cin.ignore();
+                cin.get();
+                system("cls");
+            }
+    }
 }

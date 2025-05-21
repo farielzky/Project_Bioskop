@@ -1,12 +1,12 @@
-Judul Film: Cars 3
-Sinopsis: McQueen yang sudah tua dan akan pensiun, namun dia menemukan penerusnya bernam cruz
-Sutradara: Disney
+Judul Film: Frozen
+Sinopsis: Tentang ratu kerajaan yang memiliki kekuatan Es
+Sutradara: Walt Disney
 Genre: Animation
-Durasi: 80
+Durasi: 90
 ==========================================
-Judul Film: Upin Ipin
-Sinopsis: Tentang Kembar yang suka menjelajahi dunia
-Sutradara: Les Copaque
+Judul Film: Wreck it Ralph
+Sinopsis: Tentang Karakter Game yang tersesat di Game lain
+Sutradara: Disney
 Genre: Animation
 Durasi: 90
 ==========================================
