@@ -48,7 +48,7 @@ vector<Film> Movie;
 vector<makanan> food;
 vector<minuman> drink;
 vector<vector<jadwal_film>> Jadwal;
-string passwordAdmin = "shafiq123";
+string passwordAdmin = "111";
 vector<Tiket> tiket_dipesan;
 
 void tampilkanmenucustomer(string name) {
@@ -182,37 +182,56 @@ void pesantiket(string name){
 }
 
 
-void carifilm(string name){
-    string cari;
-    bool ditemukan = false;
+void carifilm(string name) {
+    while(true) {  // Loop utama untuk terus mencari sampai pengguna memilih keluar
+        string cari;
+        bool ditemukan = false;
 
-    cout << "\nMasukkan judul film yang ingin dicari : ";
-    cin.ignore();
-    getline(cin, cari);
+        cout << "\nMasukkan judul film yang ingin dicari: ";
+        cin.ignore();
+        getline(cin, cari);
 
-    cout << "\nHasil Pencarian : \n";
 
-    for(int i = 0; i < Movie.size(); i++){
-        if(Movie[i].judul_Film == cari){
-            cout << "\nFilm Ditemukan !" << endl;
-            cout << "   Judul     : " << Movie[i].judul_Film << endl;
-            cout << "   Genre     : " << Movie[i].genre << endl;
-            cout << "   Durasi    : " << Movie[i].durasi << " Menit" << endl;
-            cout << "   Sutradara : " << Movie[i].direktur << endl;
-            cout << "   Sinopsis  : " << Movie[i].sinopsis << endl;
-            ditemukan = true;
-            break;
+        cout << "\nHasil Pencarian : \n";
+
+        for(int i = 0; i < Movie.size(); i++) {
+            if(Movie[i].judul_Film == cari) {
+                cout << "\nFilm Ditemukan !" << endl;
+                cout << "   Judul     : " << Movie[i].judul_Film << endl;
+                cout << "   Genre     : " << Movie[i].genre << endl;
+                cout << "   Durasi    : " << Movie[i].durasi << " Menit" << endl;
+                cout << "   Sutradara : " << Movie[i].direktur << endl;
+                cout << "   Sinopsis  : " << Movie[i].sinopsis << endl;
+                ditemukan = true;
+                break;
+            }
+        }
+
+        if(!ditemukan) {
+            cout << "\nFilm tidak ditemukan !" << endl;
+            
+            char pilihan;
+            cout << "\nApakah Anda ingin mencari lagi? (y/n): ";
+            cin >> pilihan;
+            cin.ignore();  // Membersihkan newline dari buffer
+            
+            if(pilihan != 'y' && pilihan != 'Y') {
+                system("cls");
+                return;
+            }
+            
+            // Jika memilih 'y', loop akan berlanjut
+            system("cls");
+            continue;
+        }
+        else {
+            cout << "\nTekan Enter untuk kembali ke menu utama.";
+            cin.ignore();
+            cin.get();
+            system("cls");
+            return;
         }
     }
-
-    if(!ditemukan){
-        cout << "\nFilm tidak ditemukan !" << endl;
-    }
-
-    cout << "\nTekan Enter untuk kembali ke menu utama.";
-    cin.ignore();
-    cin.get();
-    system("cls");
 }
 
 void hapusfilm(){
@@ -382,16 +401,18 @@ void tampilanmenu_makanan_minuman(string name){
     cout << ">=================      DAFTAR MAKANAN      =================<\n";
     if(food.empty()){
         cout << "Tidak ada makanan yang tersedia.\n";
-    }
-    for(int i = 0; i < 5; i++){
-        cout << i+1 << ". " << setw(20) << left << food[i].namaMakanan << "Rp " << food[i].hargaMakanan << endl;   
+    }else{
+        for(int i = 0; i < 5; i++){
+            cout << i+1 << ". " << setw(20) << left << food[i].namaMakanan << "Rp " << food[i].hargaMakanan << endl;   
+        }
     }
     cout << "\n>=================      DAFTAR MINUMAN      =================<\n";
     if(drink.empty()){
         cout << "Tidak ada minuman yang tersedia.\n";
-    }
-    for(int i = 0; i < 5; i++){
-        cout << i+1 << ". " << setw(20) << left << drink[i].namaMinuman << "Rp " << drink[i].hargaMinuman << endl;
+    }else{
+        for(int i = 0; i < 5; i++){
+            cout << i+1 << ". " << setw(20) << left << drink[i].namaMinuman << "Rp " << drink[i].hargaMinuman << endl;
+        }
     }
 
     cout << "\nTekan Enter untuk kembali ke menu utama.";
@@ -426,7 +447,7 @@ void menucustomer(){
             break;
         case 5:
             cout << "Terima kasih telah menggunakan aplikasi ini!" << endl;
-            break;
+            return;
         default: cout << "Pilihan tidak valid!" << endl;
     }
     }
@@ -461,7 +482,7 @@ void tampilkanmenuAdmin(){
 }
 
 void menuAdmin(){
-    int pil;
+    int pil=0;
 
     while(pil != 8){
     system("cls");
@@ -492,19 +513,20 @@ void menuAdmin(){
             //lihatdaftarpembeli();
             break;
         case 8 :
-            cout << "Kembali ke menu utama" << endl;
-            break;
+             cout << "Tekan Enter untuk kembali ke menu utama...";
+             cin.get();
+             return;
         default : 
             cout << "Pilihan tidak valid!" << endl;
             cout << "Tekan Enter untuk mencoba lagi.";
             cin.ignore();
             cin.get();
             system("cls");
-            menuAdmin();
             break;
         }
     }
 }
+
 
 void menuawalAdmin(){
     int percobaan = 0;
@@ -560,6 +582,7 @@ int main()
             cout << "Selamat Datang di Menu Customer" << endl;
             menucustomer();
             break;
-        }
-    return 0;
+    }
+
+    
 }
